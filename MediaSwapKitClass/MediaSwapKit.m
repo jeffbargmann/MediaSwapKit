@@ -33,6 +33,11 @@
     //Send
     return [self sendImage:image withMetadata:metadata withUTI:uti toUrl:url withReturnUrl:returnUrl];
 }
++ (bool) sendImageAsReply: (UIImage*) image {
+    if(!self.senderExpectingResponse)
+        return false;
+    return [MediaSwapKit sendImage:image withMetadata:MediaSwapKit.lastReceivedImageMetadata withUTI:MediaSwapKit.lastReceivedImageUTI toUrl:MediaSwapKit.lastSenderReturnUrl withReturnUrl:nil];
+}
 + (bool) sendImage: (UIImage*) image withMetadata: (NSDictionary*) metadata withUTI: (NSString*) uti toUrl: (NSURL*) url withReturnUrl: (NSURL*) returnUrl
 {
     //Sanity

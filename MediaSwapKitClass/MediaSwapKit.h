@@ -22,6 +22,7 @@ typedef void (^MediaReceivedBlock)(UIImage *image, NSDictionary *metadata, NSStr
 //Sending
 + (bool) sendAsset: (ALAsset*) asset toUrl: (NSURL*) url withReturnUrl: (NSURL*) returnUrl;
 + (bool) sendImage: (UIImage*) image withMetadata: (NSDictionary*) metadata withUTI: (NSString*) uti toUrl: (NSURL*) url withReturnUrl: (NSURL*) returnUrl;
++ (bool) sendImageAsReply: (UIImage*) image;
 + (NSURL*) defaultIncomingUrlScheme;
 
 //Receiving

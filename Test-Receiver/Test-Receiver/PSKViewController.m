@@ -32,7 +32,7 @@
     }
 
     //Send image
-    [MediaSwapKit sendImage:self.photoImageView.image withMetadata:MediaSwapKit.lastReceivedImageMetadata withUTI:MediaSwapKit.lastReceivedImageUTI toUrl:MediaSwapKit.lastSenderReturnUrl withReturnUrl:nil];
+    [MediaSwapKit sendImageAsReply:self.photoImageView.image];
     
     //Reset
     [MediaSwapKit reset];
