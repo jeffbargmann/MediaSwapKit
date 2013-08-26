@@ -13,7 +13,7 @@
 @implementation MediaSwapKit
 
 //Sending
-+ (bool) sendAsset: (ALAsset*) asset toUrl: (NSURL*) url withReturnUrl: (NSURL*) returnUrl
++ (bool) sendAsset: (ALAsset*) asset toUrl: (NSURL*) url withReplyUrl: (NSURL*) ReplyUrl
 {
     //Sanity
     if(!asset || !url.absoluteString.length)
@@ -31,14 +31,14 @@
         return false;
  
     //Send
-    return [self sendImage:image withMetadata:metadata withUTI:uti toUrl:url withReturnUrl:returnUrl];
+    return [self sendImage:image withMetadata:metadata withUTI:uti toUrl:url withReplyUrl:ReplyUrl];
 }
 + (bool) sendImageAsReply: (UIImage*) image {
     if(!self.senderExpectingResponse)
         return false;
-    return [MediaSwapKit sendImage:image withMetadata:MediaSwapKit.lastReceivedImageMetadata withUTI:MediaSwapKit.lastReceivedImageUTI toUrl:MediaSwapKit.lastSenderReturnUrl withReturnUrl:nil];
+    return [MediaSwapKit sendImage:image withMetadata:MediaSwapKit.lastReceivedImageMetadata withUTI:MediaSwapKit.lastReceivedImageUTI toUrl:MediaSwapKit.lastSenderReplyUrl withReplyUrl:nil];
 }
-+ (bool) sendImage: (UIImage*) image withMetadata: (NSDictionary*) metadata withUTI: (NSString*) uti toUrl: (NSURL*) url withReturnUrl: (NSURL*) returnUrl
++ (bool) sendImage: (UIImage*) image withMetadata: (NSDictionary*) metadata withUTI: (NSString*) uti toUrl: (NSURL*) url withReplyUrl: (NSURL*) ReplyUrl
 {
     //Sanity
     if(!image || !url.absoluteString.length)
@@ -89,13 +89,16 @@
     [userInfo setObject:kMediaSwapKit_ProtocolVersion forKey:@"protocolVersion"];
     if(kMediaSwapKit_SenderName.length)
         [userInfo setObject:kMediaSwapKit_SenderName forKey:@"senderName"];
-    if(returnUrl.absoluteString.length)
-        [userInfo setObject:returnUrl.absoluteString forKey:@"senderReturnUrl"];
+    if(ReplyUrl.absoluteString.length)
+        [userInfo setObject:ReplyUrl.absoluteString forKey:@"senderReplyUrl"];
     [pasteboardContents addObject:@{@"mediaSwapKitUserInfo": [NSKeyedArchiver archivedDataWithRootObject:userInfo]}];
     
     //Save pasteboard contents
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     pasteboard.items = pasteboardContents;
+    
+    //Reset data about the last-received image
+    [MediaSwapKit reset];
     
     //Open other application
     [[UIApplication sharedApplication] openURL:url];
@@ -146,7 +149,7 @@
     
     //Read sender info
     NSString *senderName = [userInfo valueForKey:@"senderName"];
-    NSString *senderReturnUrl = [userInfo valueForKey:@"senderReturnUrl"];
+    NSString *senderReplyUrl = [userInfo valueForKey:@"senderReplyUrl"];
     if(!image)
         return false;
     
@@ -155,13 +158,13 @@
     _lastReceivedImageMetadata = metadata;
     _lastReceivedImageUTI = uti;
     _lastSenderName = senderName;
-    _lastSenderReturnUrl = (senderReturnUrl.length?[NSURL URLWithString:senderReturnUrl]:nil);
+    _lastSenderReplyUrl = (senderReplyUrl.length?[NSURL URLWithString:senderReplyUrl]:nil);
     
     //Clear the pasteboard
     pasteboard.string = @" ";
     
     //Pass to handler
-    handler(image, metadata, uti, senderName, senderReturnUrl);
+    handler(image, metadata, uti, senderName, senderReplyUrl);
     return true;
 }
 
@@ -186,18 +189,18 @@ static UIImage *_lastReceivedImage;
 static NSString *_lastReceivedImageUTI;
 static NSDictionary *_lastReceivedImageMetadata;
 static NSString *_lastSenderName;
-static NSURL *_lastSenderReturnUrl;
+static NSURL *_lastSenderReplyUrl;
 + (UIImage*) lastReceivedImage { return _lastReceivedImage; }
 + (NSString*) lastReceivedImageUTI { return _lastReceivedImageUTI; }
 + (NSDictionary*) lastReceivedImageMetadata { return _lastReceivedImageMetadata; }
 + (NSString*) lastSenderName { return _lastSenderName; }
-+ (NSURL*) lastSenderReturnUrl { return _lastSenderReturnUrl; }
-+ (bool) senderExpectingResponse { return _lastSenderReturnUrl.absoluteString.length; }
++ (NSURL*) lastSenderReplyUrl { return _lastSenderReplyUrl; }
++ (bool) senderExpectingResponse { return _lastSenderReplyUrl.absoluteString.length; }
 + (void) reset {
     _lastReceivedImage = nil;
     _lastReceivedImageUTI = nil;
     _lastReceivedImageMetadata = nil;
     _lastSenderName = nil;
-    _lastSenderReturnUrl = nil;
+    _lastSenderReplyUrl = nil;
 }
 @end

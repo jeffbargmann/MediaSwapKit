@@ -42,14 +42,14 @@
          annotation:(id)annotation {
     
     //Detect and handle incoming images
-    if([MediaSwapKit handleUrlReceivedWithHandler:^(UIImage *image, NSDictionary *metadata, NSString *uti, NSString *senderName, NSString *senderReturnUrl) {
+    if([MediaSwapKit handleUrlReceivedWithHandler:^(UIImage *image, NSDictionary *metadata, NSString *uti, NSString *senderName, NSString *senderReplyUrl) {
         
         //Display debug data
         NSMutableString *debugOutput = [NSMutableString stringWithCapacity:2000];
         [debugOutput appendFormat:@"Image: %dx%d", (int)image.size.width, (int)image.size.height];
         [debugOutput appendFormat:@"\nImageUTI: %@", uti];
         [debugOutput appendFormat:@"\nSender: %@", senderName];
-        [debugOutput appendFormat:@"\nReturnURL: %@", senderReturnUrl];
+        [debugOutput appendFormat:@"\nReplyUrl: %@", senderReplyUrl];
         [debugOutput appendFormat:@"\nMetadata:\n%@", metadata];
         UIAlertView *alert = [[UIAlertView alloc] init];
         [alert addButtonWithTitle:@"OK"];

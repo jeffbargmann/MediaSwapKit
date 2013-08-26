@@ -33,10 +33,6 @@
 
     //Send image
     [MediaSwapKit sendImageAsReply:self.photoImageView.image];
-    
-    //Reset
-    [MediaSwapKit reset];
-    self.photoImageView.image = nil;
 }
 +(UIImage*) drawText:(NSString*) text inImage:(UIImage*) image atPoint:(CGPoint) point
 {

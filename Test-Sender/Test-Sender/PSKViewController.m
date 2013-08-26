@@ -66,7 +66,7 @@ static ALAsset *_asset;
     }
     
     //Perform send
-    [MediaSwapKit sendAsset:_asset toUrl:[NSURL URLWithString:@"mediaswapkit-editor://editimage"] withReturnUrl:kMediaSwapKit_DefaultSenderUrl];
+    [MediaSwapKit sendAsset:_asset toUrl:[NSURL URLWithString:@"mediaswapkit-editor://editimage"] withReplyUrl:kMediaSwapKit_DefaultReplyUrl];
 }
 
 - (void) saveIncomingImageFromMediaSwapKit {
